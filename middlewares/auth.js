@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken')
 module.exports.authMiddleware = async(req, res,next) =>
 {
     const authHeader = req.headers.authorization
-    console.log(authHeader)
+    // console.log(authHeader)
 
     if(!authHeader || !authHeader.startsWith('Bearer '))
     {

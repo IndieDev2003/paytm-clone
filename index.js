@@ -10,10 +10,7 @@ app.use(express.json())
 
 
 app.use('/app/v1', mainRouter)
-app.get('/', (req,res)=>
-{
-    console.log('Working')
-})
+
 
 app.listen(process.env.PORT, () =>
 {

@@ -1,6 +1,7 @@
 const User = require('../models/user.Schema')
 const zod = require('zod')
 const jwt = require('jsonwebtoken')
+const Account = require('../models/account.Schema')
 
 
 const signupSchema = zod.object({
@@ -31,6 +32,8 @@ module.exports.register = async(req,res) =>
     const createdUser = await User.create({name: req.body.name, email : req.body.email, password :  req.body.password})
     if(!createdUser)
         return res.json({msg: 'User creation failes'})
+
+    await Account.create({userId : createdUser._id, balance : 1 + Math.floor(Math.random() * 100000)})
 
     return res.json({msg: 'User created successfully!',
         createdUser
