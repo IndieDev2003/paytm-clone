@@ -1,5 +1,8 @@
 const User = require('../user.Schema')
 const zod = require('zod')
+const jwt = require('jsonwebtoken')
+
+
 const signupSchema = zod.object({
     name: zod.string(),
     email: zod.string(),
@@ -37,4 +40,48 @@ module.exports.register = async(req,res) =>
 
 
 
-// module.exports.login
+module.exports.login = async(req,res) =>
+{
+    const { email, password} = req.body
+
+    const user = await User.findOne({email})
+    if(!user)
+    {
+        return res.json({msg: 'email not registered'})
+    }
+    
+    if(user.password !== password)
+    {
+        return res.json({msg: 'Invalid password!'})
+    }
+    let userId = user._id
+    let token = jwt.sign({userId}, process.env.JWT_SECRET)
+
+    return res.json({msg: 'User signed in ', token })
+
+
+}
+
+const updateBody = zod.object({
+    name : zod.string().optional(),
+    email : zod.string().optional(),
+    password : zod.string().optional()
+})
+
+module.exports.update = async(req,res) =>
+{
+
+    const {success} = updateBody.safeParse(req.body)
+
+    if(!success)
+    {
+        return res.status(411).json({msg: 'Error while updating info'})
+    }
+
+     let result = await User.updateOne({id: req.userId}, {$set : req.body})
+    //  console.log(result)
+     if (result.modifiedCount === 0) {
+        return res.status(404).json({ msg: 'User not found or no changes made' });
+    }
+    return res.json({msg: 'User updated'})
+}
