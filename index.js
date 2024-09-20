@@ -3,6 +3,11 @@ const app = express()
 
 const db = require('./db.js')
 const mainRouter = require('./routes/index.js')
+const cors = require('cors')
+
+app.use(cors())
+app.use(express.json())
+
 
 app.use('/app/v1', mainRouter)
 app.get('/', (req,res)=>
