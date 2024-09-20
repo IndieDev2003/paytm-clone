@@ -1,4 +1,4 @@
-const User = require('../user.Schema')
+const User = require('../models/user.Schema')
 const zod = require('zod')
 const jwt = require('jsonwebtoken')
 
@@ -84,4 +84,30 @@ module.exports.update = async(req,res) =>
         return res.status(404).json({ msg: 'User not found or no changes made' });
     }
     return res.json({msg: 'User updated'})
+}
+
+
+module.exports.filterBy = async(req,res) =>
+{
+    const filter = req.query.filter || "";
+
+    const users = await User.find({
+        $or: [{
+            name: {
+                "$regex": filter
+            }
+        }, {
+            email: {
+                "$regex": filter
+            }
+        }]
+    })
+
+    res.json({
+        user: users.map(user => ({
+            name: user.name,
+            email: user.email,
+            _id: user._id
+        }))
+    })
 }
