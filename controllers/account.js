@@ -4,9 +4,9 @@ const User = require('../models/user.Schema')
 
 module.exports.getBalance = async(req,res) =>
 {
-    console.log(req.user)
+    // console.log(req.user)
     const account = await Account.findOne({userId:req.user})
-    console.log(account)
+    // console.log(account)
 
     return res.json({ Balance : account.balance})
 
@@ -33,8 +33,8 @@ module.exports.transfer = async(req,res) =>
         return res.status(400).json({msg: 'User account not found'})
     }
 
-    await Account.updateOne({userId : req.user}, {$inc :{balance : -amount}}).session(session)
-    await Account.findOne({userId: sendTo}, {$inc : {balance: +amount}}).session(session)
+    await Account.updateOne({userId : req.user}, { $inc :{ balance : -amount } }).session(session)
+    await Account.updateOne({userId: sendTo}, { $inc : { balance: +amount } }).session(session)
 
     await session.commitTransaction();
 
